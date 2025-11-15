@@ -3,55 +3,55 @@ import math
 
 class Procurement:
     #Handles supplier-related logic: choosing cheapest supplier and calculating restock cost.
-    def __init__(self, supplier_prices: dict[str, dict[str, float]]):
+    def __init__(self, supplier_prices: dict = suppliers):
         self.supplier_prices = supplier_prices
-        self.supplier_names = list(supplier_prices.keys())
 
     def choose_best_supplier(self,restock_needed: dict[str, int])-> dict[str, str]:
         #Additional method: automatically select the cheapest supplier for each plant.
         best_choice = {}
-        for plant in restock_needed:
+        for plant in restock_needed.keys():
             best_supplier = min(
-                self.supplier_names,
-                key=lambda s: self.supplier_prices[s].get(plant, float('inf'))
+                list(self.supplier_prices.keys()),
+                key=lambda s: self.supplier_prices[s].get(plant)
             )
             best_choice[plant] = best_supplier
         return best_choice
 
-    def calculate_restock_cost(self, restock_needed: dict[str, int], supplier_choice: dict[str, str]) -> float:
-        #Calculate total restock cost based on supplier choice.
+    def restock_cost(self,restock_needed: dict[str, int],supplier_choice: dict[str, str]) -> float:
+        # Calculate total restock cost based on supplier choice.
         restock_cost = 0.0
         for plant, qty in restock_needed.items():
             supplier = supplier_choice.get(plant)
             if supplier:
                 unit_price = self.supplier_prices[supplier].get(plant, 0.0)
                 restock_cost += qty * unit_price
-        return restock_cost
+        return round(restock_cost, 2)
 
 
 class Inventory:
-    #Manages the greenhouse stock lifecycle with four steps: consumption，depreciation，restocking，cost.
-
+    # Manages the greenhouse stock lifecycle with four steps: consumption，depreciation，restocking，cost.
     def __init__(
         self,
-        capacity: dict = greenhouse_max_capacity,
-        depreciation: dict = depreciation_pm,
-        greenhouse_cost: dict = greenhouse_cost_pm,
-        supplier: dict = suppliers,
+        supplier_choice: dict[str, str],
+        sales_plan: dict[str, int],
+        best_choice = None
     ):
-        #Initialize inventory with capacity, cost, and procurement system.
-        self.capacity = capacity
-        self.depreciation = depreciation
-        self.greenhouse_cost = greenhouse_cost
+        # Initialize inventory with capacity, cost, and procurement system.
+        self.capacity = greenhouse_max_capacity
+        self.depreciation = depreciation_pm
+        self.greenhouse_cost = greenhouse_cost_pm
         self.recipe = recipe
-        self.current_stock = capacity.copy()
-        self.procurement = Procurement(supplier)
+        self.current_stock = self.capacity.copy()
+        self.supplier_choice = supplier_choice
+        self.best_choice = best_choice
+        self.sale_plan = sales_plan
+        self.restock_needed = {}
 
-    def consume_plants(self,sales_plan: dict[str, int]) -> dict[str, int]:
-        #Deduct plant quantities from current stock based on sales plan.
-        #Tips：`self.current_stock`reflects monthly sales consumption.
-        consumption = {'roses': 0 , 'daisies': 0 , 'greenery': 0}
-        for bouquet, qty in sales_plan.items():
+    def consume_plants(self) -> dict[str, int]:
+        # Deduct plant quantities from current stock based on sales plan.
+        # Tips：`self.current_stock`reflects monthly sales consumption.
+        consumption = {plant: 0 for plant in self.capacity}
+        for bouquet, qty in self.sale_plan.items():
             if bouquet not in self.recipe:
                 continue
             for plant, need in self.recipe[bouquet].items():
@@ -68,29 +68,24 @@ class Inventory:
             self.current_stock[plant] = max(0, self.current_stock[plant] - loss[plant])
         return self.current_stock,loss
 
-    def calculate_restock_needed(self) -> dict[str, int]:
+    def restock_needed(self) -> dict[str, int]:
         #Calculate restock needed for each plant.
-        restock_needed ={}
-        for plant in self.capacity:
-            if self.current_stock[plant] < self.capacity[plant]:
-                restock_needed[plant] = self.capacity[plant] - self.current_stock[plant]
-        return restock_needed
+        for plant, capacity in self.capacity.items():
+            if self.current_stock[plant] < capacity:
+                self.restock_needed[plant] = capacity - self.current_stock[plant]
+        return self.restock_needed
 
     def auto_restock(self) -> float:
         #Additional method: automatically select the best plan and restock to full capacity.
-        restock_needed = self.calculate_restock_needed()
-        supplier_choice = self.procurement.choose_best_supplier(restock_needed) #best choice by default
-        restock_cost = self.procurement.calculate_restock_cost(restock_needed, supplier_choice)
-        for plant in restock_needed:
+        self.supplier_choice = self.best_choice #best choice by default
+        restock_cost = self.best_choice.restock_cost()
+        for plant in self.restock_needed:
             self.current_stock[plant] = self.capacity[plant]
         return restock_cost
 
-    def calculate_monthly_cost(self,restock_cost:float) -> float:
+    def inventory_cost(self,restock_cost:float) -> float:
         #Calculate total monthly inventory cost (maintenance + restocking).
-        maintenance_cost = sum(
-            self.greenhouse_cost[plant] * self.capacity[plant]
-            for plant in self.capacity
-        )
+        maintenance_cost = sum(self.greenhouse_cost[plant] * self.capacity[plant] for plant in self.capacity)
         return restock_cost + maintenance_cost
 
     def get_stock_status(self) -> str:

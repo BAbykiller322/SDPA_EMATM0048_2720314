@@ -6,6 +6,9 @@ florist_min_capacity = 1
 florist_salary = 15.50
 florist_working_hours = 80
 
+#rent cost per month
+rent_pm = 800.0
+
 #the greenhouse capacity of the roses,daisies and greenery
 greenhouse_max_capacity = {
     "roses": 200,
@@ -54,3 +57,9 @@ bouquet_price = {
     "You Rose to the Occasion": 32.5
 }
 
+#Bouquet time required
+bouquet_time_required = {
+    "Fern-tastic":20,
+    "Be-Leaf in Yourself":30,
+    "You Rose to the Occasion": 45
+}
