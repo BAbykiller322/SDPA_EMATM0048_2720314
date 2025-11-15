@@ -3,19 +3,20 @@ from Florist import Florist
 from Constants import *
 
 class FlowerShop:
-    #management class that coordinates sales, inventory, and costs.
+    """management class that coordinates sales, inventory, and costs."""
     def __init__(self,inventory: Inventory,sales_plan: dict[str, int]):
         self.inventory = inventory
         self.sale_plan = sales_plan
         self.florists = []
         self.supplier_choice = None
+        self.cash = initial_cash
 
     def set_supplier_choice(self,supplier_choice):
         self.supplier_choice = supplier_choice
 
 
     def add_florist(self, name: str, talents: dict = None):
-        # Employee management: add florist
+        """employee management: add florist"""
         for florist in self.florists:
             if florist.name == name:
                 return f"[Error] florist '{name}' exists."
@@ -28,7 +29,7 @@ class FlowerShop:
 
 
     def remove_florist(self, name: str):
-        # Employee management: remove florist
+        """employee management: remove florist"""
         if len(self.florists) <= florist_min_capacity:
             return f"[Error] reached minimum capacity(1)."
         else:
@@ -39,7 +40,7 @@ class FlowerShop:
             return f"[Error] no florist named '{name}'."
 
     def check_customer_demand(self,bouquet_demands = bouquet_demand):
-        # Return list of bouquets exceeding demand.
+        """Return list of bouquets exceeding demand."""
         exceeded = []
         for bouquet,qty in bouquet_demands.items():
             planned = self.sale_plan.get(bouquet, 0)
@@ -48,8 +49,10 @@ class FlowerShop:
         return exceeded
 
     def check_florist_capacity(self):
-        # check if total florists can complete the required sale_plan in the month
-        # returns: bool,assignment_dict
+        """
+        check if total florists can complete the required sale_plan in the month
+        returns: bool,assignment_dict
+        """
         florist_max_time = florist_working_hours * 60 # the max working time for each florist
         remaining_time = {f.name: florist_max_time for f in self.florists} # the remaining working time for each florist
         assignment = {f.name: [] for f in self.florists} # tasks each florist complete
@@ -80,7 +83,7 @@ class FlowerShop:
                         counter[task] = counter.get(task, 0) + 1
                     structured_assignment[florist] = counter
                 return False, structured_assignment
-            remaining_time[best_florist.name] -= best_time # assign the task to the best florist
+            remaining_time[best_florist.name] -= best_time #assign the task to the best florist
             assignment[best_florist.name].append(bouquet)
         structured_assignment = {} # structured output
         for florist, tasks in assignment.items():
@@ -91,7 +94,7 @@ class FlowerShop:
         return True, structured_assignment
 
     def check_inventory_capacity(self):
-        # check weather the sale_plan exceeded the inventory capacity
+        """check weather the sale_plan exceeded the inventory capacity"""
         needed_plants = {plant:0 for plant in greenhouse_max_capacity}
         shortages = {}
         for bouquet, bouquet_qty in self.sale_plan.items():
@@ -107,21 +110,27 @@ class FlowerShop:
             return False
         return True
 
+    def cash_status(self):
+        return self.cash
+
     def calculate_revenue(self):
-        # calculate revenue this month
+        """calculate revenue this month"""
         revenue = 0.0
         for bouquet, bouquet_qty in self.sale_plan.items():
             price = bouquet_price.get(bouquet, 0.0)
             revenue += bouquet_qty * price
+        self.cash += revenue
         return round(revenue,2)
 
     def calculate_cost(self,restock_cost : float):
-        # calculate cost this month: return total_cost, inventory_cost, labor_cost and rent in order
+        """calculate cost this month: return total_cost, inventory_cost, labor_cost and rent in order"""
         labor_cost = 0.0
         rent = rent_pm
         inventory_cost = self.inventory.inventory_cost(restock_cost)
         for florist in self.florists:
             labor_cost += florist.monthly_cost()
         total_cost = labor_cost + rent + inventory_cost
+        self.cash -= total_cost
         return round(total_cost,2),round(inventory_cost,2),round(labor_cost,2),round(rent,2)
+
 
