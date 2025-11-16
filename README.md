@@ -22,13 +22,13 @@ You will be prompted to:
  - Enter the number of months to run the simulation:  
    - Press Enter with no input to use the default of 6 months.  
  - For each month:  
-   - 1.Hire or fire florists(with any specialties).  
-   - 2.Enter the quantity of each type of bouquet you wish to sell to develop a sales plan.  
+   - Hire or fire florists(with any specialties).  
+   - Enter the quantity of each type of bouquet you wish to sell to develop a sales plan.  
  - The program then simulates the month and displays by following ordering:  
-   - 1.current florists  
-   - 2.sales and costs for the month  
-   - 3.greenhouse stock levels  
-   - 4.updated cash balance  
+   - current florists  
+   - sales and costs for the month  
+   - greenhouse stock levels  
+   - updated cash balance  
  - The simulation ends when:  
-   - 1.the chosen number of months has been completed  
-   - 2.the shop goes bankrupt (cash is insufficient to pay monthly expenses)  
+   - the chosen number of months has been completed  
+   - the shop goes bankrupt (cash is insufficient to pay monthly expenses)  
