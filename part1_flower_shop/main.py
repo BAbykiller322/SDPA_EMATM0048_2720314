@@ -3,7 +3,6 @@ from Constants import *
 from Inventory import Inventory, Procurement
 from FlowerShop import FlowerShop
 
-"""--------utility input check functions--------"""
 def month_int(prompt:str, allow_zero=False, positive_only=True):
     """Robust integer input with error handling."""
     while True:
@@ -22,7 +21,10 @@ def month_int(prompt:str, allow_zero=False, positive_only=True):
             print("zero not allowed here.")
             continue
         else:
-            return value
+            if value > 60:
+                print("month should less than 60")
+            else:
+                return value
 
 def talent_int(prompt:str):
     """Input an integer from 0 to 3 to indicate whether you have a special skill and the type of the skill."""
@@ -80,12 +82,10 @@ def other_int_input(prompt:str, positive_only=True):
             return value
 
 
-"""--------------------create class--------------------"""
 inv = Inventory()
 procurement = Procurement()
 flowershop = FlowerShop(inv)
 
-"""--------------------main program--------------------"""
 """Welcome title"""
 print(
     "------------------------------------\n\n"
@@ -108,7 +108,10 @@ for month in range(months):
           f"current staff: {[florist.name for florist in flowershop.florists]}")
 
     max_hire = florist_max_capacity - len(flowershop.florists)
-    min_hire = 1 if month == 0 else 0  # require hiring at least one florist in the first month
+    if month == 0:# require hiring at least one florist in the first month
+        min_hire = 1  
+    else:
+        min_hire = 0  
     if max_hire < min_hire:
         print("Staff is already at maximum.")
         florist_hire_qty = 0
@@ -148,7 +151,7 @@ for month in range(months):
             
         add_result = flowershop.add_florist(florist_name, talents)
         if add_result is not True:
-            print(f"{add_result}/n")
+            print(f"{add_result}\n")
         else:
             hired += 1
     print(f"current staff: {[florist.name for florist in flowershop.florists]}")
@@ -271,6 +274,7 @@ for month in range(months):
     )
     print(f"End of month Cash Balance:{flowershop.cash_status()}\n")
     if flowershop.cash_status() <= 0:
+        print("Sorry, your flower shop has gone bankrupt.")
         break
 print(
     "***********************************************************************\n"
