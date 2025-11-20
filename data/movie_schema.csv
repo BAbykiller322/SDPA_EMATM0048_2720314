@@ -1,0 +1,17 @@
+column,description
+id,Unique movie ID
+title,Localized title returned by API
+release_date,Release date (YYYY-MM-DD)
+vote_average,TMDB average rating
+vote_count,Number of votes submitted
+popularity,Popularity index (TMDB metric)
+original_language,Original language ISO code
+genre_ids,List of TMDB genre IDs
+runtime,Runtime in minutes
+budget,Production budget in USD
+revenue,Box office revenue in USD 
+status,Release status flag
+original_title,Original language title
+tagline,Marketing tagline
+spoken_languages,Comma-separated spoken languages
+production_countries,Comma-separated production countries or ISO codes
