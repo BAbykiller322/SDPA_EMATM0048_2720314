@@ -5,7 +5,7 @@ Part 1 implements a **text based flower shop simulation** using an **object orie
 ---
 
 # Part 1: Flower Shop Simulation
-The program models a small flower shop which  
+The program models a small flower shop which    
  - **employs florists** to **assemble bouquets**  
  - manages a greenhouse with **limited storage** and **monthly depreciation**  
  - buys plants from different **suppliers**  
@@ -151,4 +151,68 @@ For each month the following steps occur.
  - Suppliers always maintain sufficient inventory and can ship immediately.    
  - Preparation time depends only on bouquet type and florist talents.  
  - No random changes in prices or demand are modelled.  
+
+
+# Part 2: Data analysis projects
+
+
+## 1. Project Overview
+This project performs a comprehensive data analysis of the movie industry to identify key drivers of commercial success (ROI) and audience engagement.
+
+The analysis follows the Data Science lifecycle:
+ - Data Collection: Crawling real-world data from the TMDB (The Movie Database) API.
+
+ - Preparation: Cleaning data, handling missing values, and feature engineering.
+
+ - Exploration: Visualizing distributions and correlations.
+
+ - Deep Dive: Answering a complex question regarding the relationship between genre, runtime, popularity, and profitability.
+
+## 2. File Structure
+analysis.ipynb: The main Jupyter Notebook containing all code, visualizations, and markdown explanations.
+tmdb_movies_2020-2025.csv: The raw dataset extracted and saved during Step 1.
+movie_schema.csv: explanations of movie features 
+readme.md: This documentation file.
+
+## 3. Dependencies & Setup
+This project requires Python 3.14+ and the following external libraries: pandas, numpy, matplotlib, seaborn, and requests
+
+## 4. Methodology & Logic
+
+### 4.1: Data Collection:
+Source: TMDB API  
+Method:
+ - Used requests to fetch data from the /discover/movie endpoint (pages 1-10).
+ - Performed a second pass using /movie/{id} to fetch detailed financial data (Budget, Revenue) and Runtime, which are not available in the summary list.
+ - Data Integration: Merged the discovery list with detailed metrics into a single DataFrame.
+
+### 4.2: Data Preparation & Cleaning
+Data Validity: Removed rows with 0 value in budget or revenue as they prevent accurate ROI calculation.
+
+Feature Engineering:
+ - Created ROI (Return on Investment) = Revenue / Budget. 
+ - Applied Log Transformation (np.log1p) to vote_count and popularity to handle heavy-tailed distributions (long-tail effect).
+ - Segmentation: Split the dataset into Main Movies (vote count > 50) and Cold Movies (vote count < 50) to analyze mainstream vs. niche market behaviors separately.
+
+### 4.3: Exploratory Analysis (EDA)
+Visualized the distribution of Runtime, Vote Average, and Budget.
+
+Identified the "Head Effect" in popularity and the "Niche Effect" in ratings using Histograms and Boxplots.  
+
+Key Insight: Niche movies (Cold Movies) show more polarized ratings compared to mainstream blockbusters.
+
+### 4.4: Complex Question Analysis
+Main Question: What are the key drivers of Movie ROI, and how do niche movies differ from blockbusters?
+
+This was answered through some sub-questions, for example:
+ - Genre Analysis: Which genres offer the best risk-reward ratio?
+ - Quality vs. Popularity: Are high-rated movies always profitable?
+
+## 5: Conclusion & Future Work
+The analysis reveals that while high budget and popularity correlate with revenue, ROI is maximized by controlling budget (e.g., Horror genre).   
+Future work could involve building a regression model to predict ROI based on these engineered features.
+
+## 6. Acknowledgements
+Data provided by The Movie Database (TMDB).
+This product uses the TMDB API but is not endorsed or certified by TMDB
 
