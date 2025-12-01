@@ -14,10 +14,12 @@ def month_int(prompt:str, allow_zero=False, positive_only=True):
             print("please enter a positive integer.")
             continue
         value = int(value)
-        if positive_only and value < 0:
+        if positive_only and value < 0: 
+            """reject negitive number"""
             print("please enter a non-negative integer.")
             continue
-        elif not allow_zero and value == 0:
+        elif not allow_zero and value == 0: 
+            """reject zero"""
             print("zero not allowed here.")
             continue
         else:
@@ -27,7 +29,11 @@ def month_int(prompt:str, allow_zero=False, positive_only=True):
                 return value
 
 def talent_int(prompt:str):
-    """Input an integer from 0 to 3 to indicate whether you have a special skill and the type of the skill."""
+    """
+    Input an integer whthin [0,3] to indicate
+    whether you have a special skill
+    waht is the type of the skill
+    """
     while True:
         value = input(prompt).strip()
         if value == "":
@@ -43,7 +49,7 @@ def talent_int(prompt:str):
             print("please enter a number in [0,3].")
 
 def talent_float(prompt: str):
-    """Input a float as radio, in the range (0,1)"""
+    """Input a float as talent ratio, in the range (0,1)"""
     while True:
         value = input(prompt).strip()
         try:
@@ -65,7 +71,7 @@ def supplier_input(prompt: str):
         elif value == '1':
             return 1
         else:
-            print("please enter an integer in [0,1].")
+            print("please enter the integer :0 or 1.")
 
 def other_int_input(prompt:str, positive_only=True):
     """Robust integer input with error handling."""
@@ -261,7 +267,7 @@ for month in range(months):
                 for plant in restock_needed.keys():
                     inv.current_stock[plant] = inv.capacity[plant]
 
-    """Calculate the income and outgoings of a florist"""
+    """Calculate the income and outgoings of the flowershop"""
     print(f"Cash Balance:\n Month Start:{flowershop.cash_status()}\n"
           f"Income:{flowershop.calculate_revenue(sale_plan)}")
     total_cost, inventory_cost, employee_costs, rent = flowershop.calculate_cost(restock_cost)

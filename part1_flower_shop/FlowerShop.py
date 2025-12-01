@@ -42,7 +42,7 @@ class FlowerShop:
         updated staff list or error message.
         """
         if len(self.florists) <= florist_min_capacity:
-            return f"[Error] reached minimum capacity(1)."
+            return f"reached minimum capacity(1)."
         else:
             for florist in self.florists:
                 if florist.name == name:

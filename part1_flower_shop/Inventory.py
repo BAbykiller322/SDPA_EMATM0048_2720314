@@ -111,7 +111,7 @@ class Inventory:
         Calculate units required to refill to capacity.
 
         Output:
-        {plant: capacity - current_stock} for plants below capacity (others omitted).
+        {plant: capacity - current_stock} for plants below capacity.
         """
         self.restock_needed_dict = {}
         for plant, capacity in self.capacity.items():
